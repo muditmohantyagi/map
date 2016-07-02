@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
+    <script>
+var map;
+function initialize() {
+  var mapOptions = {
+    zoom: 8,
+    center: new google.maps.LatLng(-34.397, 150.644),
+	mapTypeId: google.maps.MapTypeId.ROADMAP
+
+  };
+  map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
+ //
+ 	google.maps.event.addListener(map, 'click', function(event) {
+	placeMarker(event.latLng);
+	});
+ //////////////
+	var marker;
+	function placeMarker(location) {
+	if(marker)
+	{ //on vérifie si le marqueur existe
+		marker.setPosition(location); //on change sa position
+	}else
+	{
+		marker = new google.maps.Marker({ //on créé le marqueur
+		position: location, 
+		map: map
+		});
+	}
+	document.getElementById('latitute').value=location.lat();
+	document.getElementById('longitute').value=location.lng();
+	getAddress(location);
+	}
+	/////
+		function getAddress(latLng)
+	{
+		var geocoder = new google.maps.Geocoder();
+		geocoder.geocode( {'latLng': latLng},
+		function(results, status) {
+		if(status == google.maps.GeocoderStatus.OK) {
+			if(results[0])
+			{
+				document.getElementById("address").value = results[0].formatted_address;
+			}
+			else
+			{
+				document.getElementById("address").value = "No results";
+			}
+		}
+		else 
+		{
+			document.getElementById("address").value = status;
+		}
+		});
+	}
+	////
+	
+ 
+/*google.maps.event.addListener(map,'click',function(event)
+ { 
+ document.getElementById('latlongclicked').value = event.latLng.lat() + ', ' + event.latLng.lng() 
+ })
+*/ 
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas" style="width: 500px;height: 500px;"></div>
+	<input type="text" id="latitute">
+	<input type="text" id="longitute">
+	<input type="text" id="address">
+  </body>
+</html>
